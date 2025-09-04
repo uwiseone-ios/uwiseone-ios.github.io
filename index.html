@@ -190,7 +190,7 @@
                     <ul class="newsletter-list">
                         ${groupedByYear[year].map(newsletter => `
                             <li class="newsletter-item">
-                                <a href="${newsletter.url}" class="newsletter-link">${newsletter.title}</a>
+                                <a href="${newsletter.url}" class="newsletter-link" target="_blank">${newsletter.title}</a>
                                 <div class="newsletter-date">${formatDate(newsletter.date)}</div>
                             </li>
                         `).join('')}
