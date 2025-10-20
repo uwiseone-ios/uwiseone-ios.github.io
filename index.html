@@ -48,7 +48,7 @@
         }
 
         .newsletter-item {
-            padding: 20px 0;
+            padding: 12px 0;
             border-bottom: 1px solid #f6f8fa;
             transition: background-color 0.2s ease;
         }
@@ -68,7 +68,7 @@
         .newsletter-link {
             text-decoration: none;
             color: #0969da;
-            font-size: 1.2rem;
+            font-size: 1.05rem;
             font-weight: 500;
             display: block;
             transition: color 0.2s ease;
@@ -112,6 +112,72 @@
             font-size: 0.95rem;
         }
 
+        /* Folding (details/summary) styles */
+        details.year, details.month {
+            margin-bottom: 12px;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid transparent;
+            transition: box-shadow 0.15s ease, border-color 0.15s ease;
+            background: #ffffff;
+        }
+
+        details.year[open], details.month[open] {
+            box-shadow: 0 1px 0 rgba(9,105,218,0.06);
+            border-color: #e6eefc;
+        }
+
+        summary.year-summary, summary.month-summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            font-weight: 600;
+            color: #24292f;
+        }
+
+        summary.month-summary {
+            font-weight: 600;
+            color: #ffffff;
+            background-color: #3580dc;
+        }
+
+        /* hide default marker and add custom chevron */
+        summary::-webkit-details-marker { display: none; }
+        summary::marker { font-size: 0; }
+
+        summary .chev {
+            transition: transform 0.15s ease;
+            width: 12px;
+            height: 12px;
+            display: inline-block;
+            transform-origin: center;
+            color: #ffffff;
+            font-size: 12px;
+            line-height: 12px;
+        }
+
+        details[open] summary .chev {
+            transform: rotate(90deg);
+        }
+
+        .month-list {
+            padding: 10px 18px 16px 18px;
+            background: #fbfdff;
+        }
+
+        .month-list .newsletter-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f4f8;
+        }
+
+        .month-list .newsletter-item:last-child {
+            border-bottom: none;
+        }
+
         @media (max-width: 768px) {
             body {
                 padding: 20px 15px;
@@ -146,6 +212,11 @@
     <script>
         // 뉴스레터 데이터 (실제 사용시 여기에 본인의 뉴스레터 정보를 입력하세요)
         const newsletters = [
+            {
+                title: "[Vol.15] 🚀 Tech Insights — 팀을 위한 기술 소식",
+                url: "./202510/20251021.html",
+                date: "2025-10-21"
+            },
             {
                 title: "[Vol.14] 🚀 Tech Insights — 팀을 위한 기술 소식",
                 url: "./202510/20251020.html",
@@ -227,38 +298,89 @@
             });
         }
 
-        function groupByYear(newsletters) {
+        function groupByYearMonth(newsletters) {
             const grouped = {};
-            newsletters.forEach(newsletter => {
-                const year = new Date(newsletter.date).getFullYear();
-                if (!grouped[year]) {
-                    grouped[year] = [];
-                }
-                grouped[year].push(newsletter);
+            newsletters.forEach(n => {
+                const d = new Date(n.date);
+                const year = d.getFullYear();
+                const month = d.getMonth() + 1; // 1..12
+                if (!grouped[year]) grouped[year] = {};
+                if (!grouped[year][month]) grouped[year][month] = [];
+                grouped[year][month].push(n);
             });
             return grouped;
         }
 
         function renderNewsletters() {
             const archive = document.getElementById('newsletterArchive');
-            const groupedByYear = groupByYear(newsletters);
-            const years = Object.keys(groupedByYear).sort((a, b) => b - a);
+            const grouped = groupByYearMonth(newsletters);
+            const years = Object.keys(grouped).sort((a, b) => b - a);
 
-            archive.innerHTML = years.map(year => `
-                <div class="year-section">
-                    <h2 class="year-title">${year}</h2>
-                    <ul class="newsletter-list">
-                        ${groupedByYear[year].map(newsletter => `
-                            <li class="newsletter-item">
-                                <a href="${newsletter.url}" class="newsletter-link" target="_blank">${newsletter.title}</a>
-                                <div class="newsletter-date">${formatDate(newsletter.date)}</div>
-                            </li>
-                        `).join('')}
-                    </ul>
-                </div>
-            `).join('');
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth() + 1;
+
+            archive.innerHTML = years.map(year => {
+                const months = Object.keys(grouped[year]).map(m => parseInt(m, 10)).sort((a, b) => b - a);
+                const yearOpen = parseInt(year, 10) === currentYear;
+                return `
+                    <details class="year" ${yearOpen ? 'open' : ''}>
+                        <summary class="year-summary">
+                            <span>${year}</span>
+                            <span class="chev">▶</span>
+                        </summary>
+                        <div style="padding:12px 16px 16px 16px;">
+                            ${months.map(month => {
+                                const items = grouped[year][month];
+                                const monthName = new Date(year, month - 1).toLocaleString('ko-KR', { month: 'long' });
+                                const monthOpen = yearOpen && month === currentMonth;
+                                return `
+                                    <details class="month" ${monthOpen ? 'open' : ''}>
+                                        <summary class="month-summary">
+                                            <span>${monthName} (${items.length}건 발행)</span>
+                                            <span class="chev">▶</span>
+                                        </summary>
+                                        <div class="month-list">
+                                            ${items.map(item => `
+                                                <div class="newsletter-item">
+                                                    <a href="${item.url}" class="newsletter-link" target="_blank">${item.title}</a>
+                                                    <div class="newsletter-date">${formatDate(item.date)}</div>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </details>
+                                `;
+                            }).join('')}
+                        </div>
+                    </details>
+                `;
+            }).join('');
 
             document.getElementById('totalCount').textContent = newsletters.length;
+
+            // Attach accordion behavior: only one year open at a time, and within a year only one month open.
+            // Year-level accordion
+            const yearDetails = Array.from(document.querySelectorAll('#newsletterArchive details.year'));
+            yearDetails.forEach(d => {
+                d.addEventListener('toggle', (e) => {
+                    if (d.open) {
+                        yearDetails.forEach(other => { if (other !== d) other.removeAttribute('open'); });
+                    }
+                });
+            });
+
+            // Month-level accordion (per year)
+            const yearContainers = Array.from(document.querySelectorAll('#newsletterArchive details.year'));
+            yearContainers.forEach(yearEl => {
+                const monthDetails = Array.from(yearEl.querySelectorAll('details.month'));
+                monthDetails.forEach(md => {
+                    md.addEventListener('toggle', () => {
+                        if (md.open) {
+                            monthDetails.forEach(other => { if (other !== md) other.removeAttribute('open'); });
+                        }
+                    });
+                });
+            });
         }
 
         // 페이지 로드 시 뉴스레터 렌더링
