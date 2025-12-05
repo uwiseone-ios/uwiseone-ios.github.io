@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@dosilao 블로그 카드 디자인</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Poppins:wght@300;400;600;700;800&family=Outfit:wght@300;400;600;700;800&family=Rubik:wght@300;400;600;700;800&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: #ffffff;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .card {
+            width: 1024px;
+            height: 1024px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .card-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            padding: 80px;
+        }
+
+        .blog-name {
+            font-family: 'Inter', sans-serif;
+            font-size: 20px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        /* 카드 1: 좌상단 배치 */
+        .layout-1 {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+        .main-title-1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 110px;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.1;
+            margin: 30px 0 25px 0;
+            letter-spacing: -2px;
+        }
+        .sub-title-1 {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 26px;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.9);
+            letter-spacing: 1px;
+        }
+
+        /* 카드 2: 우하단 배치 */
+        .layout-2 {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: flex-end;
+            text-align: right;
+        }
+        .main-title-2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 105px;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1;
+            margin: 30px 0 25px 0;
+            letter-spacing: -3px;
+            background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.7) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .sub-title-2 {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 24px;
+            font-weight: 400;
+            color: #fff;
+            padding: 12px 0;
+            border-top: 2px solid rgba(255, 255, 255, 0.8);
+        }
+
+        /* 카드 3: 좌측 중앙 배치 */
+        .layout-3 {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .main-title-3 {
+            font-family: 'Rubik', sans-serif;
+            font-size: 100px;
+            font-weight: 600;
+            color: #fff;
+            line-height: 1.15;
+            margin: 25px 0;
+            padding-left: 8px;
+            border-left: 8px solid #fff;
+        }
+        .sub-title-3 {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 25px;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.95);
+            margin-left: 8px;
+        }
+
+        /* 카드 4: 우측 상단 배치 */
+        .layout-4 {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-end;
+            text-align: right;
+        }
+        .main-title-4 {
+            font-family: 'Inter', sans-serif;
+            font-size: 95px;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.1;
+            margin: 30px 0 20px 0;
+            text-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        .sub-title-4 {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 23px;
+            font-weight: 400;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 14px 30px;
+            border-radius: 50px;
+        }
+
+        /* 카드 5: 좌하단 배치 */
+        .layout-5 {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: flex-start;
+        }
+        .main-title-5 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 108px;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.05;
+            margin: 25px 0;
+            letter-spacing: -1px;
+        }
+        .sub-title-5 {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 26px;
+            font-weight: 300;
+            color: #fff;
+            padding-bottom: 15px;
+            border-bottom: 3px solid rgba(255, 255, 255, 0.9);
+            margin-top: 10px;
+        }
+
+        /* 카드 6: 중앙 상단 배치 */
+        .layout-6 {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            text-align: center;
+        }
+        .main-title-6 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 112px;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.05;
+            margin: 35px 0 30px 0;
+            letter-spacing: -2px;
+        }
+        .sub-title-6 {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 24px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.95);
+            letter-spacing: 2px;
+        }
+
+        /* 카드 7: 우측 중앙 배치 */
+        .layout-7 {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-end;
+            text-align: right;
+        }
+        .main-title-7 {
+            font-family: 'Rubik', sans-serif;
+            font-size: 98px;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.1;
+            margin: 25px 0;
+            padding-right: 8px;
+            border-right: 8px solid #fff;
+        }
+        .sub-title-7 {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 25px;
+            font-weight: 300;
+            color: #fff;
+            margin-right: 8px;
+        }
+
+        /* 카드 8: 중앙 하단 배치 */
+        .layout-8 {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            text-align: center;
+        }
+        .main-title-8 {
+            font-family: 'Inter', sans-serif;
+            font-size: 102px;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.1;
+            margin: 30px 0 25px 0;
+            letter-spacing: -1px;
+        }
+        .sub-title-8 {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 24px;
+            font-weight: 400;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            padding: 16px 45px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* 카드 9: 좌측 상단-중앙 */
+        .layout-9 {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            padding-top: 180px;
+        }
+        .main-title-9 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 115px;
+            font-weight: 800;
+            color: #fff;
+            line-height: 0.95;
+            margin: 30px 0 28px 0;
+            letter-spacing: -3px;
+            text-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+        }
+        .sub-title-9 {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 26px;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.9);
+            padding-top: 15px;
+            border-top: 2px solid rgba(255, 255, 255, 0.8);
+        }
+
+        /* 카드 10: 우측 하단-중앙 */
+        .layout-10 {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: flex-end;
+            text-align: right;
+            padding-bottom: 180px;
+        }
+        .main-title-10 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 105px;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.05;
+            margin: 28px 0;
+            letter-spacing: -2px;
+        }
+        .sub-title-10 {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 25px;
+            font-weight: 400;
+            color: #fff;
+            padding: 15px 0;
+        }
+
+        /* 그라데이션 오버레이 */
+        .overlay-1 {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.25) 100%);
+        }
+        .overlay-2 {
+            background: linear-gradient(-45deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.2) 100%);
+        }
+        .overlay-3 {
+            background: linear-gradient(90deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.3) 100%);
+        }
+        .overlay-4 {
+            background: linear-gradient(-135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.25) 100%);
+        }
+        .overlay-5 {
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.75) 100%);
+        }
+        .overlay-6 {
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.25) 100%);
+        }
+        .overlay-7 {
+            background: linear-gradient(-90deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.3) 100%);
+        }
+        .overlay-8 {
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.7) 100%);
+        }
+        .overlay-9 {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.6) 100%);
+        }
+        .overlay-10 {
+            background: linear-gradient(-45deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.6) 50%, rgba(0, 0, 0, 0.75) 100%);
+        }
+    </style>
+</head>
+<body>
+    <!-- 카드 1: 좌상단 배치 -->
+    <div class="card">
+        <div class="card-bg" style="background-image: url('image1.jpg');"></div>
+        <div class="card-overlay overlay-1"></div>
+        <div class="card-content layout-1">
+            <div class="blog-name">@dosilao</div>
+            <h1 class="main-title-1">삶을<br>기록하다</h1>
+            <p class="sub-title-1">일상의 순간들</p>
+        </div>
+    </div>
+
+    <!-- 카드 2: 우하단 배치 -->
+    <div class="card">
+        <div class="card-bg" style="background-image: url('image2.jpg');"></div>
+        <div class="card-overlay overlay-2"></div>
+        <div class="card-content layout-2">
+            <div class="blog-name">@dosilao</div>
+            <h1 class="main-title-2">창의적인<br>생각</h1>
+            <p class="sub-title-2">영감을 찾아가는 여정</p>
+        </div>
+    </div>
+
+    <!-- 카드 3: 좌측 중앙 배치 -->
+    <div class="card">
+        <div class="card-bg" style="background-image: url('image3.jpg');"></div>
+        <div class="card-overlay overlay-3"></div>
+        <div class="card-content layout-3">
+            <div class="blog-name">@dosilao</div>
+            <h1 class="main-title-3">시간을<br>담다</h1>
+            <p class="sub-title-3">순간의 아름다움</p>
+        </div>
+    </div>
+
+    <!-- 카드 4: 우측 상단 배치 -->
+    <div class="card">
+        <div class="card-bg" style="background-image: url('image4.jpg');"></div>
+        <div class="card-overlay overlay-4"></div>
+        <div class="card-content layout-4">
+            <div class="blog-name">@dosilao</div>
+            <h1 class="main-title-4">꿈을<br>향해</h1>
+            <p class="sub-title-4">매일의 성장</p>
+        </div>
+    </div>
+
+    <!-- 카드 5: 좌하단 배치 -->
+    <div class="card">
+        <div class="card-bg" style="background-image: url('image5.jpg');"></div>
+        <div class="card-overlay overlay-5"></div>
+        <div class="card-content layout-5">
+            <div class="blog-name">@dosilao</div>
+            <h1 class="main-title-5">생각의<br>정원</h1>
+            <p class="sub-title-5">마음을 키우는 곳</p>
+        </div>
+    </div>
+
+    <!-- 카드 6: 중앙 상단 배치 -->
+    <div class="card">
+        <div class="card-bg" style="background-image: url('image6.jpg');"></div>
+        <div class="card-overlay overlay-6"></div>
+        <div class="card-content layout-6">
+            <div class="blog-name">@dosilao</div>
+            <h1 class="main-title-6">여행하는<br>마음</h1>
+            <p class="sub-title-6">세상을 만나다</p>
+        </div>
+    </div>
+
+    <!-- 카드 7: 우측 중앙 배치 -->
+    <div class="card">
+        <div class="card-bg" style="background-image: url('image7.jpg');"></div>
+        <div class="card-overlay overlay-7"></div>
+        <div class="card-content layout-7">
+            <div class="blog-name">@dosilao</div>
+            <h1 class="main-title-7">자유로운<br>상상</h1>
+            <p class="sub-title-7">경계 없는 사고</p>
+        </div>
+    </div>
+
+    <!-- 카드 8: 중앙 하단 배치 -->
+    <div class="card">
+        <div class="card-bg" style="background-image: url('image8.jpg');"></div>
+        <div class="card-overlay overlay-8"></div>
+        <div class="card-content layout-8">
+            <div class="blog-name">@dosilao</div>
+            <h1 class="main-title-8">감성의<br>순간</h1>
+            <p class="sub-title-8">진심을 담은 글</p>
+        </div>
+    </div>
+
+    <!-- 카드 9: 좌측 상단-중앙 배치 -->
+    <div class="card">
+        <div class="card-bg" style="background-image: url('image9.jpg');"></div>
+        <div class="card-overlay overlay-9"></div>
+        <div class="card-content layout-9">
+            <div class="blog-name">@dosilao</div>
+            <h1 class="main-title-9">평범한<br>특별함</h1>
+            <p class="sub-title-9">소소한 행복</p>
+        </div>
+    </div>
+
+    <!-- 카드 10: 우측 하단-중앙 배치 -->
+    <div class="card">
+        <div class="card-bg" style="background-image: url('image10.jpg');"></div>
+        <div class="card-overlay overlay-10"></div>
+        <div class="card-content layout-10">
+            <div class="blog-name">@dosilao</div>
+            <h1 class="main-title-10">나를<br>찾아가다</h1>
+            <p class="sub-title-10">내면의 목소리</p>
+        </div>
+    </div>
+</body>
+</html>

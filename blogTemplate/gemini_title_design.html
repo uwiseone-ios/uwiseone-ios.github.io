@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Card Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Gothic+A1:wght@400;700&family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@300;500;700;900&family=Song+Myung&display=swap" rel="stylesheet">
+
+    <style>
+        /* [공통 초기화] */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: #222; padding: 50px; display: flex; flex-wrap: wrap; gap: 50px; justify-content: center; font-family: 'Noto Sans KR', sans-serif; }
+
+        /* [카드 기본 레이아웃] - 1024x1024 */
+        .card {
+            width: 1024px;
+            height: 1024px;
+            position: relative;
+            overflow: hidden;
+            background-color: #000;
+            /* 그림자 효과로 입체감 부여 */
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+        }
+
+        /* [배경 이미지] */
+        .card-bg {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0; left: 0;
+            z-index: 1;
+            transition: transform 0.5s ease;
+        }
+
+        /* [그라데이션 오버레이] - 이미지 위에 덮어씌움 */
+        .overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 2;
+        }
+
+        /* [텍스트 컨텐츠 영역] */
+        .content {
+            position: relative;
+            z-index: 3;
+            width: 100%;
+            height: 100%;
+            padding: 80px;
+            display: flex;
+            flex-direction: column;
+            color: #fff;
+        }
+
+        /* 블로그 이름 공통 스타일 */
+        .blog-name {
+            font-size: 24px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        /* -------------------------------------------------------
+           [스타일 1: 클래식 명조 & 중앙 정렬]
+           - 우아하고 차분한 느낌
+        ------------------------------------------------------- */
+        .style-1 .overlay { background: radial-gradient(circle, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%); }
+        .style-1 .content { justify-content: center; align-items: center; text-align: center; }
+        .style-1 .main-title {
+            font-family: 'Nanum Myeongjo', serif;
+            font-size: 90px;
+            font-weight: 800;
+            text-shadow: 2px 2px 20px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+            line-height: 1.2;
+        }
+        .style-1 .sub-title {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 32px;
+            font-weight: 300;
+            border-top: 1px solid rgba(255,255,255,0.5);
+            padding-top: 30px;
+        }
+
+        /* -------------------------------------------------------
+           [스타일 2: 모던 볼드 & 좌측 하단]
+           - 강렬하고 현대적인 느낌
+        ------------------------------------------------------- */
+        .style-2 .overlay { background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 60%); }
+        .style-2 .content { justify-content: flex-end; align-items: flex-start; }
+        .style-2 .blog-name { color: #ffd700; font-weight: 700; } /* 골드 포인트 */
+        .style-2 .main-title {
+            font-family: 'Black Han Sans', sans-serif;
+            font-size: 110px;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            text-shadow: 5px 5px 0px rgba(0,0,0,0.3);
+        }
+        .style-2 .sub-title {
+            font-size: 36px;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        /* -------------------------------------------------------
+           [스타일 3: 프레임 보더 & 우아함]
+           - 액자 같은 고급스러운 느낌
+        ------------------------------------------------------- */
+        .style-3 .overlay { background-color: rgba(0,0,0,0.4); }
+        .style-3 .content { justify-content: center; align-items: center; }
+        /* 내부 테두리 */
+        .style-3 .border-box {
+            width: 100%; height: 100%;
+            border: 2px solid rgba(255,255,255,0.7);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+            backdrop-filter: blur(2px);
+        }
+        .style-3 .main-title {
+            font-family: 'Song Myung', serif;
+            font-size: 80px;
+            margin: 20px 0;
+            border-bottom: 3px solid #fff;
+            padding-bottom: 20px;
+        }
+        .style-3 .sub-title { font-family: 'Gothic A1', sans-serif; font-size: 28px; letter-spacing: 5px; }
+
+        /* -------------------------------------------------------
+           [스타일 4: 글래스모피즘 (유리 효과)]
+           - 트렌디하고 세련된 느낌
+        ------------------------------------------------------- */
+        .style-4 .overlay { background: linear-gradient(45deg, rgba(0,0,0,0.1), rgba(0,0,0,0.4)); }
+        .style-4 .content { justify-content: center; align-items: center; }
+        .style-4 .glass-box {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            padding: 80px 60px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .style-4 .main-title {
+            font-size: 72px; font-weight: 900;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .style-4 .sub-title { font-size: 26px; font-weight: 400; }
+
+        /* -------------------------------------------------------
+           [스타일 5: 사선 분할 & 하이라이트]
+           - 역동적인 느낌
+        ------------------------------------------------------- */
+        .style-5 .overlay { background: linear-gradient(135deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%); }
+        .style-5 .content { justify-content: flex-start; padding-top: 120px; }
+        .style-5 .main-title {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 100px; font-weight: 900;
+            line-height: 1.1; margin-bottom: 30px;
+        }
+        .style-5 .highlight { color: #00e5ff; } /* 포인트 컬러 */
+        .style-5 .sub-title {
+            background: #fff; color: #000;
+            display: inline-block; padding: 10px 20px;
+            font-size: 28px; font-weight: 700;
+            transform: skew(-10deg); /* 기울임 효과 */
+        }
+
+        /* -------------------------------------------------------
+           [스타일 6: 텍스트 스트로크 (속이 빈 글씨)]
+           - 힙하고 감각적인 느낌
+        ------------------------------------------------------- */
+        .style-6 .overlay { background-color: rgba(0,0,0,0.5); }
+        .style-6 .content { justify-content: center; align-items: center; text-align: center;}
+        .style-6 .main-title {
+            font-family: 'Black Han Sans', sans-serif;
+            font-size: 130px;
+            color: transparent;
+            -webkit-text-stroke: 3px #fff; /* 테두리만 표시 */
+            margin-bottom: 10px;
+        }
+        .style-6 .sub-title {
+            font-size: 34px; font-weight: 700; background: #000; padding: 5px 15px;
+        }
+
+        /* -------------------------------------------------------
+           [스타일 7: 잡지 커버 스타일]
+           - 텍스트가 꽉 차는 레이아웃
+        ------------------------------------------------------- */
+        .style-7 .overlay { background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent, rgba(0,0,0,0.8)); }
+        .style-7 .content { justify-content: space-between; }
+        .style-7 .top-area { border-bottom: 2px solid #fff; padding-bottom: 20px; display:flex; justify-content: space-between; align-items: flex-end;}
+        .style-7 .main-title {
+            font-family: 'Nanum Myeongjo', serif;
+            font-size: 100px; font-weight: 700;
+            text-align: right;
+            line-height: 1.1;
+        }
+        .style-7 .sub-title { font-size: 30px; font-weight: 300; text-align: right; margin-top: 20px;}
+
+        /* -------------------------------------------------------
+           [스타일 8: 세로 쓰기 (버티컬)]
+           - 전통적이고 독특한 한국적 미
+        ------------------------------------------------------- */
+        .style-8 .overlay { background: rgba(0,0,0,0.3); }
+        .style-8 .content { flex-direction: row-reverse; writing-mode: vertical-rl; align-items: flex-start; justify-content: flex-start;}
+        .style-8 .blog-name { margin-bottom: 50px; margin-left: 20px; font-size: 20px; border-left: 1px solid #fff; padding-left: 15px;}
+        .style-8 .main-title {
+            font-family: 'Song Myung', serif;
+            font-size: 90px;
+            letter-spacing: 10px;
+            text-shadow: 10px 10px 30px rgba(0,0,0,0.8);
+        }
+        .style-8 .sub-title { font-size: 28px; margin-right: 30px; opacity: 0.8; font-family: 'Nanum Myeongjo';}
+
+        /* -------------------------------------------------------
+           [스타일 9: 뱃지/스티커 스타일]
+           - 귀엽고 주목도 높은 스타일
+        ------------------------------------------------------- */
+        .style-9 .overlay { background: rgba(0,0,0,0.2); }
+        .style-9 .content { justify-content: center; align-items: center; }
+        .style-9 .circle-box {
+            width: 600px; height: 600px;
+            background-color: rgba(255,255,255,0.95);
+            border-radius: 50%;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+            color: #222; /* 내부 텍스트 검정 */
+            box-shadow: 0 0 50px rgba(0,0,0,0.3);
+        }
+        .style-9 .main-title { font-size: 60px; font-weight: 900; margin-bottom: 10px; color: #222;}
+        .style-9 .sub-title { font-size: 24px; color: #555; }
+        .style-9 .blog-name { color: #888; font-size: 18px; margin-bottom: 30px; }
+
+        /* -------------------------------------------------------
+           [스타일 10: 그라데이션 텍스트 & 다크]
+           - 사이버틱하고 강렬한 무드
+        ------------------------------------------------------- */
+        .style-10 .overlay { background-color: rgba(0,0,0,0.8); }
+        .style-10 .content { justify-content: center; align-items: flex-start; text-align: left; padding-left: 100px;}
+        .style-10 .main-title {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 110px; font-weight: 900;
+            background: linear-gradient(to right, #fff, #aaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+        .style-10 .sub-title {
+            font-size: 30px; font-weight: 500; color: #00ff9d; /* 네온 그린 포인트 */
+            text-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="card style-1">
+        <img src="https://picsum.photos/1024/1024?random=1" alt="background" class="card-bg">
+        <div class="overlay"></div>
+        <div class="content">
+            <div class="blog-name">@dosilao</div>
+            <h1 class="main-title">개발자의<br>모든 기록</h1>
+            <p class="sub-title">코드와 일상, 그리고 성장</p>
+        </div>
+    </div>
+
+    <div class="card style-2">
+        <img src="https://picsum.photos/1024/1024?random=2" alt="background" class="card-bg">
+        <div class="overlay"></div>
+        <div class="content">
+            <div class="blog-name">@dosilao</div>
+            <h1 class="main-title">START<br>CODING</h1>
+            <p class="sub-title">초보자를 위한 가이드북</p>
+        </div>
+    </div>
+
+    <div class="card style-3">
+        <img src="https://picsum.photos/1024/1024?random=3" alt="background" class="card-bg">
+        <div class="overlay"></div>
+        <div class="content">
+            <div class="border-box">
+                <div class="blog-name">@dosilao</div>
+                <h1 class="main-title">오늘의<br>회고록</h1>
+                <p class="sub-title">Better than yesterday</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card style-4">
+        <img src="https://picsum.photos/1024/1024?random=4" alt="background" class="card-bg">
+        <div class="overlay"></div>
+        <div class="content">
+            <div class="glass-box">
+                <div class="blog-name">@dosilao</div>
+                <h1 class="main-title">Tech<br>Review</h1>
+                <p class="sub-title">최신 기술 트렌드 분석</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card style-5">
+        <img src="https://picsum.photos/1024/1024?random=5" alt="background" class="card-bg">
+        <div class="overlay"></div>
+        <div class="content">
+            <div class="blog-name">@dosilao</div>
+            <h1 class="main-title">Daily<br><span class="highlight">Algorithm</span></h1>
+            <p class="sub-title">하루 한 문제 풀기</p>
+        </div>
+    </div>
+
+    <div class="card style-6">
+        <img src="https://picsum.photos/1024/1024?random=6" alt="background" class="card-bg">
+        <div class="overlay"></div>
+        <div class="content">
+            <div class="blog-name">@dosilao</div>
+            <h1 class="main-title">PROJECT<br>LOGS</h1>
+            <p class="sub-title">사이드 프로젝트 진행기</p>
+        </div>
+    </div>
+
+    <div class="card style-7">
+        <img src="https://picsum.photos/1024/1024?random=7" alt="background" class="card-bg">
+        <div class="overlay"></div>
+        <div class="content">
+            <div class="top-area">
+                <div class="blog-name">@dosilao</div>
+                <div>VOL.01</div>
+            </div>
+            <div class="bottom-area">
+                <h1 class="main-title">여행,<br>그리고 사진</h1>
+                <p class="sub-title">순간을 기록하는 방법</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card style-8">
+        <img src="https://picsum.photos/1024/1024?random=8" alt="background" class="card-bg">
+        <div class="overlay"></div>
+        <div class="content">
+            <div class="blog-name">@dosilao</div>
+            <h1 class="main-title">독서의 계절</h1>
+            <p class="sub-title">마음의 양식을 쌓다</p>
+        </div>
+    </div>
+
+    <div class="card style-9">
+        <img src="https://picsum.photos/1024/1024?random=9" alt="background" class="card-bg">
+        <div class="overlay"></div>
+        <div class="content">
+            <div class="circle-box">
+                <div class="blog-name">@dosilao</div>
+                <h1 class="main-title">TIP &<br>TRICKS</h1>
+                <p class="sub-title">업무 효율을 높이는 꿀팁</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card style-10">
+        <img src="https://picsum.photos/1024/1024?random=10" alt="background" class="card-bg">
+        <div class="overlay"></div>
+        <div class="content">
+            <div class="blog-name">@dosilao</div>
+            <h1 class="main-title">DEEP<br>DIVE</h1>
+            <p class="sub-title">핵심 원리 파헤치기</p>
+        </div>
+    </div>
+
+</body>
+</html>
